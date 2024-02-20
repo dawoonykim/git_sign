@@ -48,39 +48,16 @@ public class MemberServlet extends HttpServlet {
 //		pw.write("hi");
 		String command = request.getParameter("command");
 		System.out.println("커맨드: " + command);
-		
+
 		MemberDAO dao = new MemberDAO();
-		List<MemberVO> list = dao.listMembers();
-		if (command == null) {
-		
+//		List<MemberVO> list = dao.listMembers();
 
-			pw.write("<!DOCTYPE html>" + "<html>" + "<head>" + "<meta charset=\"UTF-8\">"
-					+ "<title>Insert title here</title>" + "<style>table,tr,th,td {" + "border: solid 2px black;"
-					+ "border-collapse: collapse;" + " padding: 8px;}</style>" + "</head>"
-					+ "<table><tr><th>아이디</th><th>비밀번호</th>" + "<th>이름</th><th>이메일</th><th>가입일</th></tr>");
-			int i = 0;
-			while (i < list.size()) {
-				String id = list.get(i).getId();
-				String pwd = list.get(i).getPwd();
-				String name = list.get(i).getName();
-				String email = list.get(i).getEmail();
-				Date joinDate = list.get(i).getJoinDate();
-				pw.write("<tr><td>\r\n" + id + "</td><td>" + pwd + "</td><td>" + name + "</td><td>" + email + "</td><td>"
-						+ joinDate + "</td>" + "<td><a href='http://localhost:8090/pro07_1/test?command=delMember&id=" + id
-						+ "'>삭제</a></td>" + "</tr>");
-				i++;
-			}
-		}
-		
-
-		pw.write("</table>" + "<body>" + "<tr></tr>" + "<a href='http://localhost:8090/pro07_1/NewFile.html'>새 회원 등록하기"
-				+ "</body>" + "</html>");
 		if (command != null && command.equals("addMember")) {
 			String id = request.getParameter("id");
 			String pwd = request.getParameter("pwd");
 			String name = request.getParameter("name");
 			String email = request.getParameter("email");
-			System.out.println("가져온 가입 정보 : " + id + ", " + pwd + ", " + name + ", " + email);
+			System.out.println("가입 정보 : " + id + ", " + pwd + ", " + name + ", " + email);
 
 			MemberVO vo = new MemberVO();
 			vo.setId(id);
@@ -90,10 +67,31 @@ public class MemberServlet extends HttpServlet {
 
 			dao.addMember(vo);
 		} else if (command != null && command.equals("delMember")) {
+			System.out.println("여기는 삭제시 코드");
 			String id = request.getParameter("id");
+			System.out.println("삭제 id: " + id);
 			dao.delMember(id);
 		}
 
+		List<MemberVO> list = dao.listMembers();
+		
+		pw.write("<!DOCTYPE html>" + "<html>" + "<head>" + "<meta charset=\"UTF-8\">"
+				+ "<title>Insert title here</title>" + "<style>table,tr,th,td {" + "border: solid 2px black;"
+				+ "border-collapse: collapse;" + " padding: 8px;}</style>" + "</head>"
+				+ "<table><tr><th>아이디</th><th>비밀번호</th>" + "<th>이름</th><th>이메일</th><th>가입일</th></tr>");
+
+		for (int i = 0; i < list.size(); i++) {
+			String id = list.get(i).getId();
+			String pwd = list.get(i).getPwd();
+			String name = list.get(i).getName();
+			String email = list.get(i).getEmail();
+			Date joinDate = list.get(i).getJoinDate();
+			pw.write("<tr><td>\r\n" + id + "</td><td>" + pwd + "</td><td>" + name + "</td><td>" + email + "</td><td>"
+					+ joinDate + "</td>" + "<td><a href='http://localhost:8090/pro07_1/test?command=delMember&id=" + id
+					+ "'>삭제</a></td>" + "</tr>");
+		}
+		pw.write("</table>" + "<body>" + "<tr></tr>" + "<a href='http://localhost:8090/pro07_1/NewFile.html'>새 회원 등록하기"
+				+ "</body>" + "</html>");
 //		memDAO.listMembers();
 
 		pw.close();

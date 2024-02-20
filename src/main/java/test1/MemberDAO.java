@@ -19,11 +19,12 @@ import oracle.sql.ARRAY;
 public class MemberDAO {
 
 	private DataSource dataFactory;
-//	private PreparedStatement pstmt;
-//	private Connection conn;
+	private PreparedStatement pstmt;
+	private Connection conn;
 	// MemberDAO 객체 초기화(생성자)시에 위 정보를 불러오게 해라 - JNDI
 
 	public MemberDAO() {
+		System.out.println("MemberDAO 객체 생성");
 		try {
 			System.out.println("MemberDAO 객체 생성");
 			Context ctx = new InitialContext();
@@ -38,10 +39,10 @@ public class MemberDAO {
 	public List<MemberVO> listMembers() {
 		List<MemberVO> list = new ArrayList<MemberVO>();
 		try {
-			Connection conn = dataFactory.getConnection();
+			conn = dataFactory.getConnection();
 			String sql = "select * from T_MEMBER";
 //			ResultSet rs=pstmt.executeQuery();
-			PreparedStatement pstmt = conn.prepareStatement(sql);
+			pstmt = conn.prepareStatement(sql);
 			ResultSet rs = pstmt.executeQuery(sql);
 
 			while (rs.next()) {
@@ -73,7 +74,7 @@ public class MemberDAO {
 
 	public void addMember(MemberVO memberVO) {
 		try {
-			Connection conn1 = dataFactory.getConnection();
+			conn = dataFactory.getConnection();
 			String id = memberVO.getId();
 			String pwd = memberVO.getPwd();
 			String name = memberVO.getName();
@@ -82,19 +83,19 @@ public class MemberDAO {
 			String query = "insert into t_member(id,pwd,name,email) VALUES(?,?,?,?)";
 			System.out.println("회원 추가 sql문: " + query);
 
-			PreparedStatement pstmt1 = conn1.prepareStatement(query);
+			pstmt = conn.prepareStatement(query);
 
-			pstmt1.setString(1, id);
-			pstmt1.setString(2, pwd);
-			pstmt1.setString(3, name);
-			pstmt1.setString(4, email);
+			pstmt.setString(1, id);
+			pstmt.setString(2, pwd);
+			pstmt.setString(3, name);
+			pstmt.setString(4, email);
 			System.out.println(id + pwd + name + email);
 
 //			int num = pstmt.executeUpdate();
 //			System.out.println(num + "명이 추가됨");
 
-			pstmt1.executeUpdate();
-			pstmt1.close();
+			pstmt.executeUpdate();
+			pstmt.close();
 		} catch (Exception e) {
 			System.out.println("회원 추가시 에러");
 		}
@@ -103,15 +104,15 @@ public class MemberDAO {
 	public void delMember(String id) {
 		System.out.println("삭제하고자 하는 id: " + id);
 		try {
-			Connection conn2 = dataFactory.getConnection();
-			String query = "delete from t_member where id=?";
+			conn = dataFactory.getConnection();
+			String query = "delete from t_member" + " where id=?";
 			System.out.println("preparedStatement: " + query);
 
-			PreparedStatement pstmt2 = conn2.prepareStatement(query);
-			pstmt2.setString(1, id);
-			
-			pstmt2.executeUpdate();
-			pstmt2.close();
+			pstmt = conn.prepareStatement(query);
+			pstmt.setString(1, id);
+
+			pstmt.executeUpdate();
+			pstmt.close();
 
 		} catch (Exception e) {
 			// TODO: handle exception
